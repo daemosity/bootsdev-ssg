@@ -1,7 +1,7 @@
-from textnode import TextNode, TextType
+from htmlnode import HTMLNode
 
 def main():
-    textnode = TextNode("This is a text node", TextType.Bold, "https://www.boot.dev")
-    print(textnode)
+    htmlnode = HTMLNode("<p>", None, None, {"href":"http://example.com"})
+    print(htmlnode)
 
 main()
