@@ -109,3 +109,19 @@ def split_nodes_link(old_nodes:list[TextNode]) -> list[TextNode]:
             
     return new_nodes
         
+def text_to_textnodes(text:str) -> TextNode:
+    new_text_node = TextNode(text=text, text_type=TextType.TEXT)
+    delimiters_and_types = [("\*", TextType.ITALIC), ("\*\*", TextType.BOLD), ("`", TextType.CODE)]
+    
+    generated_node_list = [new_text_node]
+    for delimiter, text_type in delimiters_and_types:
+        generated_node_list = split_nodes_delimiter(generated_node_list, delimiter, text_type)
+    
+    generated_node_list = split_nodes_image(generated_node_list)
+    generated_node_list = split_nodes_link(generated_node_list)
+    
+    return generated_node_list
+
+def markdown_to_blocks(markdown:str):
+    split_markdown = markdown.split("\n\n")
+    print(split_markdown)
