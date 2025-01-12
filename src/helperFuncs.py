@@ -123,5 +123,9 @@ def text_to_textnodes(text:str) -> TextNode:
     return generated_node_list
 
 def markdown_to_blocks(markdown:str):
-    split_markdown = markdown.split("\n\n")
-    print(split_markdown)
+    split_markdown = re.split("\n\n|\n\s+?", markdown)
+    filtered_blocks = list(filter(lambda x: not x.isspace(), split_markdown))
+    return filtered_blocks
+
+def block_to_block_type(markdown_block:str):
+    pass
