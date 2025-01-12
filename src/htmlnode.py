@@ -13,3 +13,8 @@ class HTMLNode:
     
     def __repr__(self):
         return f"HTMLNode(tag={self.tag}, value={self.value}, children={self.children}, props={self.props})"
+    
+    def __eq__(self, other: "HTMLNode"):
+        if all([self.tag == other.tag, self.value == other.value, self.children == other.children, self.props == other.props]):
+            return True
+        return False

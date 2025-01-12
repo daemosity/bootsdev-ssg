@@ -1,6 +1,7 @@
 from enum import Enum
+from leafnode import LeafNode
 
-TextType = Enum("TextType", ["NORMAL", "BOLD", "ITALIC", "CODE", "LINK", "IMAGES"])
+TextType = Enum("TextType", ["TEXT", "BOLD", "ITALIC", "CODE", "LINK", "IMAGE"])
 
 class TextNode:
     def __init__(self, text:str, text_type:TextType, url=None):
