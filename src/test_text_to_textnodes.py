@@ -3,7 +3,7 @@ import unittest
 from helperFuncs import text_to_textnodes
 from textnode import TextNode, TextType
 
-class TestSplitNodesDelim(unittest.TestCase):     
+class TestTextToTextNodes(unittest.TestCase):     
     def test_returns_plain_text_if_no_markdown_given(self):
         text = "This is plain text"
         

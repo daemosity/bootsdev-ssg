@@ -3,7 +3,7 @@ import unittest
 from helperFuncs import split_nodes_link
 from textnode import TextNode, TextType
 
-class TestSplitNodesDelim(unittest.TestCase):        
+class TestSplitNodesLink(unittest.TestCase):        
     def test_raises_when_list_of_nodes_not_given(self):
         node = TextNode(text="This is plain text", text_type=TextType.TEXT)
         with self.assertRaises(TypeError):

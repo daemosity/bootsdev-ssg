@@ -2,7 +2,7 @@ import unittest
 
 from helperFuncs import extract_markdown_images
 
-class TestLinkExtractor(unittest.TestCase):   
+class TestImageExtractor(unittest.TestCase):   
     def test_returns_correct_list_of_tuples(self):
         test_string = "This is text with a ![rick roll](https://i.imgur.com/aKaOqIh.gif) and ![obi wan](https://i.imgur.com/fJRm4Vk.jpeg)"
         output = extract_markdown_images(test_string)
