@@ -1,5 +1,4 @@
 from enum import Enum
-from leafnode import LeafNode
 
 TextType = Enum("TextType", ["TEXT", "BOLD", "ITALIC", "CODE", "LINK", "IMAGE"])
 

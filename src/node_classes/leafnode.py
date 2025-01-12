@@ -1,5 +1,4 @@
-from multiprocessing import Value
-from htmlnode import HTMLNode
+from .htmlnode import HTMLNode
 
 class LeafNode(HTMLNode):
     def __init__(self, value:str, tag:str|None, props:dict[str,str]|None=None):

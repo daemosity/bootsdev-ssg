@@ -1,7 +1,7 @@
 import unittest
 
-from helperFuncs import split_nodes_delimiter
-from textnode import TextNode, TextType
+from ..node_transformations import split_nodes_delimiter
+from ..node_classes.textnode import TextNode, TextType
 
 class TestSplitNodesDelim(unittest.TestCase):
     def test_raises_when_no_matching_delimiter(self):

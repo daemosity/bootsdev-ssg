@@ -1,6 +1,6 @@
 import unittest
 
-from helperFuncs import markdown_to_blocks
+from ..markdown_transformations import markdown_to_blocks
 
 class TestMarkdownToBlocks(unittest.TestCase):
     def test_returns_correct_list_of_tuples(self):

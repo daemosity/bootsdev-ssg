@@ -1,6 +1,6 @@
 import unittest
 
-from htmlnode import HTMLNode
+from ..node_classes.htmlnode import HTMLNode
 
 
 class TestHTMLNode(unittest.TestCase):

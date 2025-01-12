@@ -1,7 +1,7 @@
 import unittest
 
-from helperFuncs import text_to_textnodes
-from textnode import TextNode, TextType
+from ..node_transformations import text_to_textnodes
+from ..node_classes.textnode import TextNode, TextType
 
 class TestTextToTextNodes(unittest.TestCase):     
     def test_returns_plain_text_if_no_markdown_given(self):

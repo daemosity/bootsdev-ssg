@@ -1,6 +1,6 @@
 import unittest
 
-from helperFuncs import extract_markdown_images
+from ..markdown_transformations import extract_markdown_images
 
 class TestImageExtractor(unittest.TestCase):   
     def test_returns_correct_list_of_tuples(self):
