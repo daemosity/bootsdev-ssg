@@ -1,9 +1,9 @@
-from multiprocessing import Value
+from typing import Text
 from textnode import TextType, TextNode
 from leafnode import LeafNode
 import re
 
-def text_node_to_html_node(text_node:"TextNode"):
+def text_node_to_html_node(text_node:"TextNode") -> LeafNode:
     match (text_node.text_type):
         case TextType.TEXT:
             return LeafNode(value=text_node.text, tag=None)
@@ -20,7 +20,7 @@ def text_node_to_html_node(text_node:"TextNode"):
         case _:
             raise Exception("Not a valid TextType")
 
-def split_nodes_delimiter(old_nodes:list[TextNode], delimiter:str, text_type:TextType):
+def split_nodes_delimiter(old_nodes:list[TextNode], delimiter:str, text_type:TextType) -> list[TextNode]:
     new_nodes = []
     for node in old_nodes:
         if node.text_type != TextType.TEXT:
@@ -41,16 +41,71 @@ def split_nodes_delimiter(old_nodes:list[TextNode], delimiter:str, text_type:Tex
 def extract_markdown_images(text:str) -> list[tuple[str, str]]:
     image_pattern = re.compile("\!\[(\w.+?)\]\((.+?)\)")
     alt_url_tuple_list = image_pattern.findall(text)
-    if not alt_url_tuple_list:
-        raise ValueError("Markdown invalid for image extraction")
     
     return alt_url_tuple_list
 
 def extract_markdown_links(text:str) -> list[tuple[str, str]]:
     link_pattern = re.compile("(?<!\!)\[(\w.+?)\]\((.+?)\)")
     anchor_url_tuple_list = link_pattern.findall(text)
-    if not anchor_url_tuple_list:
-        raise ValueError("Markdown invalid for image extraction")
     
     return anchor_url_tuple_list
-    
+
+def split_nodes_image(old_nodes:list[TextNode]) -> list[TextNode]:
+    new_nodes = []
+    for node in old_nodes:
+        if node.text_type != TextType.TEXT:
+            new_nodes.append(node)
+            print(f"New nodes: {new_nodes}")
+        else:
+            original_text = node.text
+            extracted_links = extract_markdown_images(node.text)
+            if not extracted_links:
+                new_nodes.append(node)
+                print(f"New nodes: {new_nodes}")
+                continue
+            
+            left_over_text = original_text
+            generated_node_list = []
+            for alt_text, url in extracted_links:
+                [first_part, left_over_text] = left_over_text.split(f"![{alt_text}]({url})",maxsplit=1)
+                generated_node_list = generated_node_list + [
+                    TextNode(text=first_part, text_type=TextType.TEXT), 
+                    TextNode(text=alt_text, text_type=TextType.IMAGE, url=url)
+                    ]
+                print(f"generated_node_list: {generated_node_list}")
+                
+            generated_node_list = generated_node_list + [TextNode(text=left_over_text, text_type=TextType.TEXT)] if left_over_text else generated_node_list
+            new_nodes = new_nodes + generated_node_list
+            
+    return new_nodes
+
+
+def split_nodes_link(old_nodes:list[TextNode]) -> list[TextNode]:
+    new_nodes = []
+    for node in old_nodes:
+        if node.text_type != TextType.TEXT:
+            new_nodes.append(node)
+            print(f"New nodes: {new_nodes}")
+        else:
+            original_text = node.text
+            extracted_links = extract_markdown_links(node.text)
+            if not extracted_links:
+                new_nodes.append(node)
+                print(f"New nodes: {new_nodes}")
+                continue
+            
+            left_over_text = original_text
+            generated_node_list = []
+            for anchor_text, url in extracted_links:
+                [first_part, left_over_text] = left_over_text.split(f"[{anchor_text}]({url})",maxsplit=1)
+                generated_node_list = generated_node_list + [
+                    TextNode(text=first_part, text_type=TextType.TEXT), 
+                    TextNode(text=anchor_text, text_type=TextType.LINK, url=url)
+                    ]
+                print(f"generated_node_list: {generated_node_list}")
+                
+            generated_node_list = generated_node_list + [TextNode(text=left_over_text, text_type=TextType.TEXT)] if left_over_text else generated_node_list
+            new_nodes = new_nodes + generated_node_list
+            
+    return new_nodes
+        
