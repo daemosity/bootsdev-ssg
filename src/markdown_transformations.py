@@ -15,7 +15,7 @@ def extract_markdown_links(text:str) -> list[tuple[str, str]]:
     
     return anchor_url_tuple_list
 
-def markdown_to_blocks(markdown:str):
+def markdown_to_blocks(markdown:str) -> list[str]:
     split_markdown = re.split("\n\n|\n\s+?", markdown)
     filtered_blocks = list(filter(lambda x: not x.isspace(), split_markdown))
     return filtered_blocks
