@@ -34,3 +34,10 @@ def block_to_block_type(markdown_block:str):
             return BlockType.ORDERED_LIST
         case _:
             return BlockType.PARAGRAPH
+        
+def extract_title(markdown:str):
+    found = re.match("# (.+?)\n", markdown)
+    if found:
+        return found.group(1)
+    else:
+        raise ValueError("No h1 header found in document")
