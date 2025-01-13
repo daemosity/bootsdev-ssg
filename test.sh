@@ -1,1 +1,1 @@
-python3 -m unittest discover -b -v
+python3 -m unittest discover -b
