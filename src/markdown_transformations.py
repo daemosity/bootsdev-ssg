@@ -1,4 +1,7 @@
+from enum import Enum
 import re
+
+BlockType = Enum("BlockType", ["PARAGRAPH", "HEADING", "CODE", "QUOTE", "UNORDERED_LIST", "ORDERED_LIST"])
 
 def extract_markdown_images(text:str) -> list[tuple[str, str]]:
     image_pattern = re.compile("\!\[(\w.+?)\]\((.+?)\)")
@@ -17,5 +20,17 @@ def markdown_to_blocks(markdown:str):
     filtered_blocks = list(filter(lambda x: not x.isspace(), split_markdown))
     return filtered_blocks
 
-def block_to_block_type(markdown_block:str):
-    pass
+def block_to_block_type(markdown_block:str):   
+    match (True):
+        case True if re.search("^#{1,6} \w", markdown_block):
+            return BlockType.HEADING
+        case True if re.fullmatch("^```(?s:.+?)```$", markdown_block):
+            return BlockType.CODE
+        case True if re.search("(?m:^>)", markdown_block):
+            return BlockType.QUOTE
+        case True if all([line.startswith("- ") for line in markdown_block.split("\n")]) or all([line.startswith("* ") for line in markdown_block.split("\n")]):
+            return BlockType.UNORDERED_LIST
+        case True if all([ line.startswith(f"{num + 1}. ") for num, line in enumerate(markdown_block.split("\n"))]):
+            return BlockType.ORDERED_LIST
+        case _:
+            return BlockType.PARAGRAPH
