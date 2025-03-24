@@ -66,18 +66,18 @@ def copy_source_dir_to_destination_dir(source, destination):
     _copy_files_to_destination(source, destination, files_to_copy)
     print("\ncopy successful!")
 
-def build_pages(source_dir_path, dest_dir_path, template_path, file_list):
+def build_pages(source_dir_path, dest_dir_path, template_path, file_list, base_path):
     for src_path in file_list:
         dest_pth = src_path.replace(source_dir_path, dest_dir_path).replace(".md", ".html")
         dest_dir = os.path.dirname(dest_pth)
         if os.path.exists(dest_dir):
-            generate_page(src_path, template_path, dest_pth)
+            generate_page(src_path, template_path, dest_pth, base_path)
         else:
             print(f"creating the following director(ies): {dest_dir}")
             os.makedirs(dest_dir)
-            generate_page(src_path, template_path, dest_pth)
+            generate_page(src_path, template_path, dest_pth, base_path)
 
-def generate_page(from_path, template_path, dest_path):
+def generate_page(from_path, template_path, dest_path, base_path):
     missing_filepaths = []
     if not os.path.exists(from_path):
         missing_filepaths.append(from_path)
@@ -102,11 +102,11 @@ def generate_page(from_path, template_path, dest_path):
     html_translation = htmlParent.to_html()
     page_title = extract_title(markdown_doc)
     edited_template = template_doc.replace("{{ Title }}", page_title).replace("{{ Content }}", html_translation)
-           
+    template_with_basepath = edited_template.replace('href="/', f'href="{base_path}').replace('src="/', f'src="{base_path}')
     with open(dest_path, "w") as d:
-        d.write(edited_template)
+        d.write(template_with_basepath)
 
-def generate_pages_recursive(dir_path_content, template_path, dest_dir_path):
+def generate_pages_recursive(dir_path_content, template_path, dest_dir_path, base_path):
     missing_filepaths = []
     if not os.path.exists(dir_path_content):
         missing_filepaths.append(dir_path_content)
@@ -118,4 +118,4 @@ def generate_pages_recursive(dir_path_content, template_path, dest_dir_path):
         raise Exception(err_message)
     
     files_to_generate = _get_files_in_tree(dir_path_content)
-    build_pages(dir_path_content, dest_dir_path, template_path, files_to_generate)
+    build_pages(dir_path_content, dest_dir_path, template_path, files_to_generate, base_path)
