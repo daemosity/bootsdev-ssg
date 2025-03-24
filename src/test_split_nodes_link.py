@@ -1,7 +1,7 @@
 import unittest
 
-from ..node_transformations import split_nodes_link
-from ..node_classes.textnode import TextNode, TextType
+from node_transformations import split_nodes_link
+from textnode import TextNode, TextType
 
 class TestSplitNodesLink(unittest.TestCase):        
     def test_raises_when_list_of_nodes_not_given(self):

@@ -1,11 +1,11 @@
 import unittest
 
-from ..node_transformations import text_to_HTMLchildren
-from ..node_classes.leafnode import LeafNode
+from node_transformations import text_to_HTMLchildren
+from leafnode import LeafNode
 
 class TestTextToHTMLChildren(unittest.TestCase):     
     def test_transforms_paragraph_markdown_to_leaf_list(self):
-        split_markdown = ["This is a paragraph of text. It has some **bold** and *italic* words inside of it."]
+        split_markdown = ["This is a paragraph of text. It has some **bold** and _italic_ words inside of it."]
         
         output = text_to_HTMLchildren(split_markdown)
         
@@ -21,7 +21,7 @@ class TestTextToHTMLChildren(unittest.TestCase):
     def test_transforms_markdown_list_to_leaf_list(self):
         split_markdown = [
             "* This is the **first** list item in a list block",
-            "* This is a *second* list item",
+            "* This is a _second_ list item",
             "* This is a list item with `some code` in it"
             ]
         

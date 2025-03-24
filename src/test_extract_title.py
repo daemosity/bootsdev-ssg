@@ -1,6 +1,6 @@
 import unittest
 
-from ..markdown_transformations import extract_title
+from markdown_transformations import extract_title
 
 class TestMarkdownToBlocks(unittest.TestCase):
     def test_returns_h1_of_markdown(self):

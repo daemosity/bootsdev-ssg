@@ -10,13 +10,13 @@ def extract_markdown_images(text:str) -> list[tuple[str, str]]:
     return alt_url_tuple_list
 
 def extract_markdown_links(text:str) -> list[tuple[str, str]]:
-    link_pattern = re.compile("(?<!\!)\[(\w.+?)\]\((.+?)\)")
+    link_pattern = re.compile("(?<!!)\[(.+?)\]\((.+?)\)")
     anchor_url_tuple_list = link_pattern.findall(text)
     
     return anchor_url_tuple_list
 
 def markdown_to_blocks(markdown:str) -> list[str]:
-    split_markdown = re.split("\n\n|\n\s+?", markdown)
+    split_markdown = re.split("\n\n(?![\n\s\w]+?```$)", markdown.strip(), flags=re.M)
     filtered_blocks = list(filter(lambda x: not x.isspace(), split_markdown))
     return filtered_blocks
 
@@ -24,7 +24,7 @@ def block_to_block_type(markdown_block:str):
     match (True):
         case True if re.search("^#{1,6} \w", markdown_block):
             return BlockType.HEADING
-        case True if re.fullmatch("^```(?s:.+?)```$", markdown_block):
+        case True if re.search("```.+```", markdown_block, re.M | re.S):
             return BlockType.CODE
         case True if re.search("(?m:^>)", markdown_block):
             return BlockType.QUOTE

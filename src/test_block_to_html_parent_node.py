@@ -1,12 +1,12 @@
 import unittest
 
-from ..node_transformations import block_to_html_parent_node, BlockType
-from ..node_classes.leafnode import LeafNode
-from ..node_classes.parentnode import ParentNode
+from node_transformations import block_to_html_parent_node, BlockType
+from leafnode import LeafNode
+from parentnode import ParentNode
 
 class TestBlockToHTMLParentNode(unittest.TestCase):     
     def test_returns_parent_given_markdown_block_and_block_type(self):
-        markdown = "This is a paragraph of text. It has some **bold** and *italic* words inside of it."
+        markdown = "This is a paragraph of text. It has some **bold** and _italic_ words inside of it."
         block_type = BlockType.PARAGRAPH
         
         output = block_to_html_parent_node(block_type, markdown)
@@ -14,7 +14,7 @@ class TestBlockToHTMLParentNode(unittest.TestCase):
         self.assertIsInstance(output, ParentNode)
         
     def test_transforms_paragraph_block_to_paragraph_parent(self):
-        markdown = "This is a paragraph of text. It has some **bold** and *italic* words inside of it."
+        markdown = "This is a paragraph of text. It has some **bold** and _italic_ words inside of it."
         block_type = BlockType.PARAGRAPH
         
         output = block_to_html_parent_node(block_type, markdown)
@@ -56,16 +56,20 @@ class TestBlockToHTMLParentNode(unittest.TestCase):
         self.assertEqual(output, expected_output)
 
     def test_transforms_code_block_to_pre_code_parent(self):
-        markdown = """```
-This is code
-```"""
+        markdown = """
+```
+This is text that _should_ remain
+the **same** even with inline stuff
+```
+"""
         block_type = BlockType.CODE
         
         output = block_to_html_parent_node(block_type, markdown)
         
-        expected_children = [
-            LeafNode(value="This is code", tag="code"),
-        ]
+        expected_children = [LeafNode(value=
+"""This is text that _should_ remain
+the **same** even with inline stuff""", tag="code")]
+        
         expected_output = ParentNode(tag="pre", children=expected_children)
         self.assertEqual(output, expected_output)
     

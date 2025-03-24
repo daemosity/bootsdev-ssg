@@ -1,6 +1,6 @@
 import unittest
 
-from ..markdown_transformations import extract_markdown_links
+from markdown_transformations import extract_markdown_links
 
 class TestLinkExtractor(unittest.TestCase):    
     def test_returns_correct_list_of_tuples(self):
@@ -17,6 +17,10 @@ class TestLinkExtractor(unittest.TestCase):
         test_string = "This is text with a link (https://www.boot.dev) and [to youtube](https://www.youtube.com/@bootdotdev)"
         output = extract_markdown_links(test_string)
         self.assertSequenceEqual(output, [("to youtube", "https://www.youtube.com/@bootdotdev")])
-        
+    
+    def test_returns_only_links_when_link_is_one_char(self):
+        test_string = "[< Back Home](/)"
+        output = extract_markdown_links(test_string)
+        self.assertSequenceEqual(output, [("< Back Home", "/")])
 if __name__ == "__main__":
     unittest.main()

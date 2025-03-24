@@ -1,7 +1,7 @@
 import unittest
 
-from ..markdown_transformations import block_to_block_type
-from ..markdown_transformations import BlockType
+from markdown_transformations import block_to_block_type
+from markdown_transformations import BlockType
 
 class TestBlockToBlockType(unittest.TestCase):
     def test_assigns_heading(self):
@@ -19,11 +19,14 @@ class TestBlockToBlockType(unittest.TestCase):
         self.assertEqual(output, BlockType.HEADING)
     
     def test_assigns_code(self):
-        block = """```
-This is code
-```"""
+        block = """
+```
+This is a block of code, it has **bold** and _italic_ words that aren't changed.
+```
+"""
         
         output = block_to_block_type(block)
+        print(output)
         
         self.assertEqual(output, BlockType.CODE)
 

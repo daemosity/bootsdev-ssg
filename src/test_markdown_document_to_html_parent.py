@@ -1,15 +1,15 @@
 import unittest
 
-from ..node_classes.parentnode import ParentNode
-from ..node_classes.leafnode import LeafNode
+from parentnode import ParentNode
+from leafnode import LeafNode
 
-from ..node_transformations import markdown_document_to_html_parent
+from node_transformations import markdown_document_to_html_parent
 
 class TestMarkdownDocToHTMLParent(unittest.TestCase):     
     def test_returns_plain_text_if_no_markdown_given(self):
         document = """# This is a heading
 
-This is a paragraph of text. It has some **bold** and *italic* words inside of it.
+This is a paragraph of text. It has some **bold** and _italic_ words inside of it.
 
 * This is the first list item in a list block
 * This is a list item
@@ -36,6 +36,22 @@ This is a paragraph of text. It has some **bold** and *italic* words inside of i
             ]
         )
         self.assertEqual(output, expected_output)
+
+    def test_returns_properly_formatted_html_if_markdown_given(self):
+        document = """# This is a heading
+
+This is a paragraph of text. It has some **bold** and _italic_ words inside of it.
+
+```
+This is a block of code, it has **bold** and _italic_ words that aren't changed.
+```
+"""
+
+        output = markdown_document_to_html_parent(document)
+        html = output.to_html()
+        
+        expected_output= "<div><h1>This is a heading</h1><p>This is a paragraph of text. It has some <b>bold</b> and <i>italic</i> words inside of it.</p><pre><code>This is a block of code, it has **bold** and _italic_ words that aren't changed.</code></pre></div>"
+        self.assertEqual(html, expected_output)
 
         
 if __name__ == "__main__":

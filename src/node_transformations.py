@@ -1,10 +1,11 @@
 import re
 
-from .node_classes.htmlnode import HTMLNode
-from .node_classes.parentnode import ParentNode
-from .node_classes.textnode import TextType, TextNode
-from .node_classes.leafnode import LeafNode
-from .markdown_transformations import block_to_block_type, extract_markdown_images, extract_markdown_links, markdown_to_blocks, BlockType
+from htmlnode import HTMLNode
+from parentnode import ParentNode
+from textnode import TextType, TextNode
+from leafnode import LeafNode
+from markdown_transformations import block_to_block_type, extract_markdown_images, extract_markdown_links, markdown_to_blocks, BlockType
+from split_nodes_delimiter import split_nodes_delimiter
 
 def text_node_to_html_node(text_node:TextNode) -> LeafNode:
     match (text_node.text_type):
@@ -22,24 +23,6 @@ def text_node_to_html_node(text_node:TextNode) -> LeafNode:
             return LeafNode(value="",tag="img", props={"src":text_node.url, "alt":text_node.text})
         case _:
             raise Exception("Not a valid TextType")
-
-def split_nodes_delimiter(old_nodes:list[TextNode], delimiter:str, text_type:TextType) -> list[TextNode]:
-    new_nodes = []
-    for node in old_nodes:
-        if node.text_type != TextType.TEXT:
-            new_nodes.append(node)
-        else:
-            pattern = re.compile(fr"(?<=\s){delimiter}(?=\w+?\b)|(?<=\b){delimiter}(?=\s)")
-            split_line = re.split(pattern, node.text)
-            if len(split_line) % 2 == 0:
-                raise ValueError(f"Error: Invalid Markdown syntax detected: {node.text}")
-            else:
-                # print(pattern)
-                # print(split_line)
-                generated_nodes = [TextNode(text=match, text_type=text_type) if idx % 2 == 1 else TextNode(text=match, text_type=TextType.TEXT) for idx, match in enumerate(split_line)]
-                # print(generated_nodes)
-                new_nodes.extend(generated_nodes)
-    return new_nodes
 
 def split_nodes_image(old_nodes:list[TextNode]) -> list[TextNode]:
     new_nodes = []
@@ -100,8 +83,9 @@ def split_nodes_link(old_nodes:list[TextNode]) -> list[TextNode]:
     return new_nodes
 
 def text_to_textnodes(text:str) -> list[TextNode]:
+    
     new_text_node = TextNode(text=text, text_type=TextType.TEXT)
-    delimiters_and_types = [("\*", TextType.ITALIC), ("\*\*", TextType.BOLD), ("`", TextType.CODE)]
+    delimiters_and_types = [("_", TextType.ITALIC), ("**", TextType.BOLD), ("`", TextType.CODE)]
     
     generated_node_list = [new_text_node]
     for delimiter, text_type in delimiters_and_types:
@@ -119,7 +103,7 @@ def block_to_html_parent_node(blocktype:BlockType, markdown_block:str):
         case BlockType.QUOTE:
             children = []
             for line in split_markdown:
-                stripped_text = line.strip("> ")
+                stripped_text = line.lstrip("> ")
                 leaf_nodes = text_to_HTMLchildren([stripped_text])
                 children += leaf_nodes
             return ParentNode(tag="blockquote", children=children)
@@ -127,7 +111,10 @@ def block_to_html_parent_node(blocktype:BlockType, markdown_block:str):
         case BlockType.UNORDERED_LIST:
             li_parents = []
             for line in split_markdown:
-                stripped_text = line.strip("-* ")
+                if line.startswith("-"):
+                    stripped_text = line.lstrip("- ")
+                else:
+                    stripped_text = line.lstrip("* ")
                 leaf_nodes = text_to_HTMLchildren([stripped_text])
                 li_parents.append(ParentNode(tag="li", children=leaf_nodes))
                 # print(leaf_nodes)
@@ -143,13 +130,9 @@ def block_to_html_parent_node(blocktype:BlockType, markdown_block:str):
             return ParentNode(tag="ol", children=li_parents)
         
         case BlockType.CODE:
-            children = []
-            for line in split_markdown:
-                if "```" in line:
-                    continue
-                else:
-                    leaf_node = LeafNode(tag="code", value=line)
-                    children += [leaf_node]
+            new_line = markdown_block.replace("`", "").strip()
+            code_node = TextNode(new_line, text_type = TextType.CODE)
+            children = [text_node_to_html_node(code_node)]
             return ParentNode(tag="pre", children=children)
         
         case BlockType.HEADING:
@@ -181,7 +164,14 @@ def markdown_document_to_html_parent(markdown:str):
     markdown_blocks = markdown_to_blocks(markdown)
     for block in markdown_blocks:
         block_type = block_to_block_type(block)
-        parent_node = block_to_html_parent_node(block_type, block)
+        try:
+            parent_node = block_to_html_parent_node(block_type, block.strip())
+        except Exception as err:
+            print()
+            print(block)
+            print(block_type)
+            print()
+            raise err
         parent_nodes.append(parent_node)
     return ParentNode(tag="div", children=parent_nodes)
         

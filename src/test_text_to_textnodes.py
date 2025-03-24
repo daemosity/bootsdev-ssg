@@ -1,7 +1,7 @@
 import unittest
 
-from ..node_transformations import text_to_textnodes
-from ..node_classes.textnode import TextNode, TextType
+from node_transformations import text_to_textnodes
+from textnode import TextNode, TextType
 
 class TestTextToTextNodes(unittest.TestCase):     
     def test_returns_plain_text_if_no_markdown_given(self):
@@ -26,7 +26,7 @@ class TestTextToTextNodes(unittest.TestCase):
         self.assertEqual(result, expected_nodelist)
     
     def test_returns_italic_text_if_italic_markdown_given(self):
-        text="This is *italic* text"
+        text="This is _italic_ text"
         
         result = text_to_textnodes(text)
         
@@ -76,7 +76,7 @@ class TestTextToTextNodes(unittest.TestCase):
         self.assertEqual(result, expected_nodelist)
     
     def test_extracts_markdown_correctly(self):
-        text = "This is **text** with an *italic* word and a `code block` and an ![obi wan image](https://i.imgur.com/fJRm4Vk.jpeg) and a [link](https://boot.dev)"
+        text = "This is **text** with an _italic_ word and a `code block` and an ![obi wan image](https://i.imgur.com/fJRm4Vk.jpeg) and a [link](https://boot.dev)"
         
         result = text_to_textnodes(text)
         
@@ -92,6 +92,25 @@ class TestTextToTextNodes(unittest.TestCase):
             TextNode(" and a ", TextType.TEXT),
             TextNode("link", TextType.LINK, "https://boot.dev"),
         ]
+        
+        self.assertEqual(result, expected_nodelist)
+        
+    def test_extracts_markdown_correctly2(self):
+        text = "As we stand at the threshold of this mystical realm, it is clear that _The Lord of the Rings_ is not merely a series but a gateway to a world that continues to enchant and inspire. It is a beacon of imagination, a wellspring of wisdom, and a testament to the power of myth. In the grand tapestry of fantasy literature, Tolkien's masterpiece is the gleaming jewel in the crown, unmatched in its majesty and enduring in its legacy. As an Archmage who has traversed the myriad realms of magic and lore, I declare with utmost conviction: _The Lord of the Rings_ reigns supreme as the greatest legendarium our world has ever known."
+        
+        result = text_to_textnodes(text)
+        print(result)
+        
+        expected_nodelist = [
+            TextNode("As we stand at the threshold of this mystical realm, it is clear that ", TextType.TEXT),
+            TextNode("The Lord of the Rings", TextType.ITALIC),
+            TextNode(" is not merely a series but a gateway to a world that continues to enchant and inspire. It is a beacon of imagination, a wellspring of wisdom, and a testament to the power of myth. In the grand tapestry of fantasy literature, Tolkien's masterpiece is the gleaming jewel in the crown, unmatched in its majesty and enduring in its legacy. As an Archmage who has traversed the myriad realms of magic and lore, I declare with utmost conviction: ", TextType.TEXT),
+            TextNode("The Lord of the Rings", TextType.ITALIC),
+            TextNode(" reigns supreme as the greatest legendarium our world has ever known.", TextType.TEXT)
+        ]
+        
+        self.assertEqual(result, expected_nodelist)
+    
         
 if __name__ == "__main__":
     unittest.main()

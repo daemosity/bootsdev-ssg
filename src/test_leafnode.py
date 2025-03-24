@@ -1,6 +1,6 @@
 import unittest
 
-from ..node_classes.leafnode import LeafNode
+from leafnode import LeafNode
 
 class TestLeafNode(unittest.TestCase):
     def test_is_instance(self):

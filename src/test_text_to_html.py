@@ -1,8 +1,8 @@
 import unittest
 
-from ..node_transformations import text_node_to_html_node
-from ..node_classes.textnode import TextNode, TextType
-from ..node_classes.leafnode import LeafNode
+from node_transformations import text_node_to_html_node
+from textnode import TextNode, TextType
+from leafnode import LeafNode
 
 class TestTextToHTML(unittest.TestCase):
     def test_raises_when_not_textType(self):
